@@ -87,7 +87,7 @@ public class MainActivityFragment extends Fragment {
             String artistName = searchText.getText().toString();
 
 
-            if (artistName.trim() .equals("") || artistName == null || artistName.isEmpty())
+            if (artistName.trim() .equals("") ||  artistName.isEmpty())
             {
                 searchText.setError(getString(R.string.error_empty__search_string));
             }else
