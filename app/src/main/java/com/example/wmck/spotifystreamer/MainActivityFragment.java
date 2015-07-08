@@ -1,30 +1,33 @@
 package com.example.wmck.spotifystreamer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.ArtistsPager;
+import kaaes.spotify.webapi.android.models.Image;
 
 
 /**
@@ -38,9 +41,15 @@ public class MainActivityFragment extends Fragment {
 	}
 
 
-    ArrayAdapter<String> artistListAdapter;
+    private String errorDialogTitle = "";
+    private String errorMessage = "";
 
-	String artist = "";
+
+    ArtistListItemAdapter artistListItemAdapter;
+    View rootView;
+
+
+    String artist = "";
 	EditText searchText;
 	ImageButton cancelBtn;
 	ImageButton.OnClickListener cancelBtnListener = new ImageButton.OnClickListener()
@@ -48,25 +57,13 @@ public class MainActivityFragment extends Fragment {
 		@Override
 		public void onClick(View view)
 		{
-			searchText.setText("");
+			searchText.setText(""); // clears the current search value when the ImageButton is clicked
 		}
 	};
 
-    // Create some dummy data for the ListView.  Here's a sample weekly forecast
-    String[] data = {
-            "Sade",
-            "Tom Tom Club",
-            "Cold Play",
-            "Pitbull",
-            "Flo Rida",
-            "Lady Ga-Ga",
-            "Duran Duran",
-            "Sia",
-            "Linkin Park",
-            "Bob Marley",
-            "Police"
-    };
-    List<String> artistList = new ArrayList<String>(Arrays.asList(data));
+
+    List<String> artistList = new ArrayList<String>();
+    List<ArtistListItem> artistListItems = new ArrayList<ArtistListItem>();
 
     EditText.OnClickListener textClickListener = new EditText.OnClickListener()
     {
@@ -74,7 +71,7 @@ public class MainActivityFragment extends Fragment {
         public void onClick(View view)
         {
             Log.d(LOG_TAG, "Search Text field has been clicked");
-            searchText.setError(null);
+            searchText.setError(null); // erases any previous error message dialogs
         }
     };
 
@@ -86,12 +83,12 @@ public class MainActivityFragment extends Fragment {
 
             String artistName = searchText.getText().toString();
 
-
             if (artistName.trim() .equals("") ||  artistName.isEmpty())
             {
                 searchText.setError(getString(R.string.error_empty__search_string));
             }else
-            if (actionId == EditorInfo.IME_ACTION_DONE)
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                    (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == MotionEvent.ACTION_DOWN))
                     {
                 handled = true;
                         // hide virtual keyboard once the search term has been submitted
@@ -99,11 +96,8 @@ public class MainActivityFragment extends Fragment {
                 imm.hideSoftInputFromWindow(searchText.getWindowToken(),
                         InputMethodManager.RESULT_UNCHANGED_SHOWN);
 
-                FetchArtistsTask     artistsTask = new FetchArtistsTask()   ;
-                        artistsTask.execute(artistName);
-
-
-
+                ArtistsTask artistsTask = new ArtistsTask()   ;
+                artistsTask.execute(artistName);
 
             }
             return handled;
@@ -111,52 +105,151 @@ public class MainActivityFragment extends Fragment {
     };
 
 
+    @Override
+    public void onCreate(Bundle currentInstanceState){
+        super.onCreate(currentInstanceState);
+        Log.d(LOG_TAG, "In onCreate method.");
+        this.setRetainInstance(true);
+    }
+
+    @Override
+    public void onDestroyView(){
+        super.onDestroyView();
+        Log.d(LOG_TAG, "Cleaning up in onDestroy method.");
+        rootView = null;
+        artistListItemAdapter = null;
+
+    }
+
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		View theView = inflater.inflate(R.layout.fragment_main, container, false);
-        ListView listView = (ListView)theView.findViewById(R.id.artist_list);
+		 rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        ListView listView = (ListView) rootView.findViewById(R.id.artist_list);
 
 
-		searchText = (EditText)theView.findViewById(R.id.search_artist);
+		searchText = (EditText) rootView.findViewById(R.id.search_artist);
         searchText.setOnEditorActionListener(editorActionListener);
         searchText.setOnClickListener(textClickListener);
-		cancelBtn = (ImageButton)theView.findViewById(R.id.cancel_search);
+		cancelBtn = (ImageButton) rootView.findViewById(R.id.cancel_search);
 		cancelBtn.setOnClickListener(cancelBtnListener);
 
-        artistListAdapter = new ArrayAdapter<String>(
-                getActivity(),
-                R.layout.list_item_artist,
-                R.id.list_item_artist_textview,
-                artistList
-        );
-        listView.setAdapter(artistListAdapter);
+        artistListItemAdapter = new ArtistListItemAdapter(getActivity(),artistListItems);
 
-		return theView;
+
+        listView.setAdapter(artistListItemAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            String artistId = artistListItemAdapter.getItem(position).getArtistId();
+            String artistName = artistListItemAdapter.getItem(position).getArtistName();
+                Intent intent = new Intent(getActivity(),TopTrackActivity.class ).putExtra(getString(R.string.artist_key), artistId);
+                intent.putExtra("artistName",artistName );
+                startActivity(intent);
+
+
+            }
+        });
+
+
+		return rootView;
 	}
 
-    public class FetchArtistsTask extends AsyncTask<String, Void,Void>
+    public class ArtistsTask extends AsyncTask<String, Void,List<Artist> >
     {
-        protected Void doInBackground(String... params){
-            String anArtist = params[0];
+        protected List<Artist> doInBackground(String... params){
+            String anArtist = params[0].trim();
             ArtistsPager pager =  getArtists(anArtist);
-            List<Artist> resultList = pager.artists.items;
+            List<Artist> resultList = new ArrayList<Artist>();
 
+            if (pager != null)
+            {
+                resultList = pager.artists.items;
 
-
-            int numOfArtists =          pager.artists.total;
-            Log.d(LOG_TAG, " Total Number is " + numOfArtists);
-            for (Artist artist: resultList){
-                Log.d (LOG_TAG, artist.name);
             }
-            return null;
+
+            return resultList;
+        }
+
+        @Override
+        protected void onPostExecute(List<Artist> artists) {
+            super.onPostExecute(artists);
+
+            if (artists != null){
+
+                if (artists.isEmpty()){
+                    rootView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertHandler.showAlertDialog(getString(R.string.alert_no_results)
+                                    , getString(R.string.try_another_search),rootView.getContext());
+                        }
+                    });
+                }
+                artistListItemAdapter.clear();
+               for (Artist anArtist: artists){
+                   Log.d(LOG_TAG, "Images " + anArtist.images);
+                   for (Image image : anArtist.images){
+                       Log.d(LOG_TAG, "Image URL " + image.url);
+                   }
+                   Image artistImage;
+                   String imageUrl = "";
+                   if ( ! anArtist.images.isEmpty()){
+                       //get the first image URL
+                       artistImage = anArtist.images.get(0);
+                       imageUrl = artistImage.url;
+                       Log.d(LOG_TAG, "First Image URL " + artistImage.url);
+                   }
+                   ArtistListItem currentItem = new ArtistListItem(anArtist.name,imageUrl, anArtist.id);
+                   artistListItemAdapter.add(currentItem);
+               }
+            }
         }
 
     }
+
     private ArtistsPager getArtists(String artistName)
     {
         SpotifyApi api = new SpotifyApi();
         SpotifyService spotify = api.getService();
-        return spotify.searchArtists(artistName);
+        ArtistsPager artistsPager = null;
+
+        try{
+            artistsPager = spotify.searchArtists(artistName);
+
+
+        }
+        catch (Exception ex){
+
+            Log.d(LOG_TAG, "Caught Exception :" + ex.getMessage());
+
+
+          // The result of wireless connectivity being disabled or a problem with the network.
+            if (ex.getCause() instanceof UnknownHostException) {
+
+                errorDialogTitle = getString(R.string.error_title_network);
+                errorMessage = getString(R.string.error_message_network);
+
+            }else {
+                errorDialogTitle = getString(R.string.error_title);
+                errorMessage = getString(R.string.error_message_spotify);
+            }
+            rootView.post(new Runnable() {
+                @Override
+                public void run() {
+
+                   AlertHandler.showAlertDialog(errorDialogTitle, errorMessage, rootView.getContext());
+
+                }
+            });
+        }
+
+        return artistsPager;
     }
+
+
+
+
+
 }
