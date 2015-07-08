@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -70,7 +69,6 @@ public class MainActivityFragment extends Fragment {
         @Override
         public void onClick(View view)
         {
-            Log.d(LOG_TAG, "Search Text field has been clicked");
             searchText.setError(null); // erases any previous error message dialogs
         }
     };
@@ -108,14 +106,13 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onCreate(Bundle currentInstanceState){
         super.onCreate(currentInstanceState);
-        Log.d(LOG_TAG, "In onCreate method.");
         this.setRetainInstance(true);
     }
 
     @Override
     public void onDestroyView(){
         super.onDestroyView();
-        Log.d(LOG_TAG, "Cleaning up in onDestroy method.");
+        // remove references to View object.
         rootView = null;
         artistListItemAdapter = null;
 
@@ -189,9 +186,9 @@ public class MainActivityFragment extends Fragment {
                 }
                 artistListItemAdapter.clear();
                for (Artist anArtist: artists){
-                   Log.d(LOG_TAG, "Images " + anArtist.images);
+
                    for (Image image : anArtist.images){
-                       Log.d(LOG_TAG, "Image URL " + image.url);
+
                    }
                    Image artistImage;
                    String imageUrl = "";
@@ -199,7 +196,7 @@ public class MainActivityFragment extends Fragment {
                        //get the first image URL
                        artistImage = anArtist.images.get(0);
                        imageUrl = artistImage.url;
-                       Log.d(LOG_TAG, "First Image URL " + artistImage.url);
+
                    }
                    ArtistListItem currentItem = new ArtistListItem(anArtist.name,imageUrl, anArtist.id);
                    artistListItemAdapter.add(currentItem);
@@ -221,8 +218,6 @@ public class MainActivityFragment extends Fragment {
 
         }
         catch (Exception ex){
-
-            Log.d(LOG_TAG, "Caught Exception :" + ex.getMessage());
 
 
           // The result of wireless connectivity being disabled or a problem with the network.
