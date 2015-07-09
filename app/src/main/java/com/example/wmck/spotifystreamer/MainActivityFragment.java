@@ -163,7 +163,6 @@ public class MainActivityFragment extends Fragment {
             if (pager != null)
             {
                 resultList = pager.artists.items;
-
             }
 
             return resultList;
@@ -214,8 +213,6 @@ public class MainActivityFragment extends Fragment {
 
         try{
             artistsPager = spotify.searchArtists(artistName);
-
-
         }
         catch (Exception ex){
 

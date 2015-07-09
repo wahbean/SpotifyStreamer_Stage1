@@ -68,7 +68,6 @@ public class TopTrackActivityFragment extends Fragment {
             topTrackstask.execute(artistId, countryCode);
         }
 
-
         listView.setAdapter(trackListAdapter);
 
         return rootView;
