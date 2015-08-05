@@ -134,7 +134,6 @@ public class MainActivityFragment extends Fragment {
 
         artistListItemAdapter = new ArtistListItemAdapter(getActivity(),artistListItems);
 
-
         listView.setAdapter(artistListItemAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -148,7 +147,6 @@ public class MainActivityFragment extends Fragment {
 
             }
         });
-
 
 		return rootView;
 	}
