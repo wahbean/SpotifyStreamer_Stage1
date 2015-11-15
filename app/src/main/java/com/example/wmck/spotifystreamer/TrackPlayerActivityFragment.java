@@ -1,10 +1,17 @@
 package com.example.wmck.spotifystreamer;
 
-import android.support.v4.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 
 /**
@@ -12,12 +19,61 @@ import android.view.ViewGroup;
  */
 public class TrackPlayerActivityFragment extends Fragment {
 
+    private final String LOG_TAG = this.getClass().getSimpleName();
+
     public TrackPlayerActivityFragment() {
     }
+
+    private View rootView;
+    private String trackPreviewUrl = "";
+    private ImageButton btnPlay;
+
+    ImageButton.OnClickListener playBtnListener = new ImageButton.OnClickListener()
+    {
+        @Override
+        public void onClick(View view)
+        {
+            Log.d(LOG_TAG, "onClick listener for Play Button ");
+        }
+    };
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_track_player, container, false);
+
+        rootView = inflater.inflate(R.layout.fragment_track_player, container, false);
+        TextView topTrackTitle =  (TextView)rootView.findViewById(R.id.player_track);
+        TextView albumName = (TextView)rootView.findViewById(R.id.player_album);
+        TextView artistName = (TextView)rootView.findViewById(R.id.player_artist);
+        ImageView thumbnailView = (ImageView)rootView.findViewById(R.id.player_album_thumbnail);
+        btnPlay = (ImageButton)rootView.findViewById(R.id.track_play);
+
+        Intent intent = getActivity().getIntent();
+
+
+
+        if (intent != null){
+            if (intent.hasExtra(getString(R.string.artist_name))){
+                artistName.setText(intent.getStringExtra(getString(R.string.artist_name)));
+
+            }
+            if (intent.hasExtra("trackTitle")){
+                topTrackTitle.setText(intent.getStringExtra("trackTitle"));
+            }
+            if (intent.hasExtra("albumName")){
+                albumName.setText(intent.getStringExtra("albumName"));
+            }
+            if (intent.hasExtra("thumbnailUri")){
+                String thumbnailUri = intent.getStringExtra("thumbnailUri");
+                Picasso.with(rootView.getContext()).load(thumbnailUri).into(thumbnailView);
+            }
+            if (intent.hasExtra(getString(R.string.track_preview_url))){
+                trackPreviewUrl = getString(R.string.track_preview_url);
+            }
+        }
+        btnPlay.setOnClickListener(playBtnListener);
+
+        return rootView;
     }
 }

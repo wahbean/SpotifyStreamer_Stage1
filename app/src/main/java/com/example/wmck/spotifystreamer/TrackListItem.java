@@ -9,6 +9,7 @@ public class TrackListItem {
     String thumbnailSmallUri;
     String thumbnailLargeUri;
     String previewUrl;
+    long   trackDuration; // in milliseconds
 
 
 
@@ -19,6 +20,14 @@ public class TrackListItem {
         this.trackTitle = trackTitle;
         this.albumName = albumName;
         this.thumbnailSmallUri = thumbnailSmallUri;
+    }
+
+    public long getTrackDuration() {
+        return trackDuration;
+    }
+
+    public void setTrackDuration(long trackDuration) {
+        this.trackDuration = trackDuration;
     }
 
     public String getThumbnailLargeUri() {

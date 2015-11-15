@@ -122,7 +122,7 @@ public class MainActivityFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		 rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ListView listView = (ListView) rootView.findViewById(R.id.artist_list);
 
 
@@ -138,10 +138,11 @@ public class MainActivityFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            String artistId = artistListItemAdapter.getItem(position).getArtistId();
-            String artistName = artistListItemAdapter.getItem(position).getArtistName();
-                Intent intent = new Intent(getActivity(),TopTrackActivity.class ).putExtra(getString(R.string.artist_key), artistId);
-                intent.putExtra("artistName",artistName );
+                String artistId = artistListItemAdapter.getItem(position).getArtistId();
+                String artistName = artistListItemAdapter.getItem(position).getArtistName();
+                Intent intent = new Intent(getActivity(), TopTrackActivity.class);
+                intent.putExtra(getString(R.string.artist_key), artistId);
+                intent.putExtra(getString(R.string.artist_name), artistName);
                 startActivity(intent);
 
 

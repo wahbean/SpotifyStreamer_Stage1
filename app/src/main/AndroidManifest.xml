@@ -23,6 +23,10 @@
             android:name=".TopTrackActivity"
             android:label="@string/title_activity_top_track" >
         </activity>
+        <activity
+            android:name=".TrackPlayerActivity"
+            android:label="@string/title_activity_track_player" >
+        </activity>
     </application>
 
 </manifest>
