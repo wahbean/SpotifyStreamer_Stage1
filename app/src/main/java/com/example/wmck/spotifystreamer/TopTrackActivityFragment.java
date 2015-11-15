@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -61,7 +62,8 @@ public class TopTrackActivityFragment extends Fragment {
             if (intent.hasExtra(getString(R.string.artist_key))) {
                  artistId = intent.getStringExtra(getString(R.string.artist_key));
             }
-            if (intent.hasExtra("artistName")) {
+            if (intent.hasExtra(getString(R.string.artist_name))) {
+                artistName = intent.getStringExtra("artistName");
                 artistHeadingView.setText(intent.getStringExtra("artistName"));
             }
             TopTracksTask topTrackstask = new TopTracksTask();
@@ -69,6 +71,24 @@ public class TopTrackActivityFragment extends Fragment {
         }
 
         listView.setAdapter(trackListAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String topTrackTitle = trackListAdapter.getItem(position).getTrackTitle();
+                String topTrackAlbum = trackListAdapter.getItem(position).getAlbumName();
+                String topTrackPreviewUrl = trackListAdapter.getItem(position).getPreviewUrl();
+                String largeThumbnailUri = trackListAdapter.getItem(position).getThumbnailLargeUri();
+                Intent intent = new Intent(getActivity(), TrackPlayerActivity.class);
+                intent.putExtra("artistName",artistName);
+                intent.putExtra("trackTitle", topTrackTitle);
+                intent.putExtra("albumName", topTrackAlbum);
+                intent.putExtra(getString(R.string.track_duration), trackListAdapter.getItem(position).getTrackDuration());
+                intent.putExtra(getString(R.string.thumbnail_uri),largeThumbnailUri);
+                intent.putExtra(getString(R.string.track_preview_url),topTrackPreviewUrl);
+                startActivity(intent);
+
+            }
+        });
 
         return rootView;
     }
@@ -105,6 +125,8 @@ public class TopTrackActivityFragment extends Fragment {
                         trackListItem.setTrackTitle(currentTrack.name);
                         trackListItem.setAlbumName(currentTrack.album.name);
                         trackListItem.setPreviewUrl(currentTrack.preview_url);
+                        trackListItem.setTrackDuration(currentTrack.duration_ms);
+
 
                         for (Image albumImage : currentTrack.album.images) {
                             if (albumImage.width > 600 && albumImage.width < 800) {
