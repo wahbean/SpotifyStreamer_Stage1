@@ -10,7 +10,7 @@
     <string name="artist_key">artistKey</string>
     <string name="alert_no_results">No Results!</string>
     <string name="try_another_search">Please try another search query.</string>
-    <string name="hint_artist_search">Enter artist or group name</string>
+    <string name="hint_artist_search">Enter artist name</string>
     <string name="ok_label">Ok</string>
     <string name="no_top_tracks">No Top Tracks</string>
     <string name="no_top_tracks_msg">No top tracks found</string>
