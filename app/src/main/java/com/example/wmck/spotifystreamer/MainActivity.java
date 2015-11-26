@@ -11,6 +11,7 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity {
 
     private static final String ARTIST_TOP_TRACKS_TAG = "TTTAG";
+    private boolean mTwoPane;
 
 
     @Override
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
             // The detail container view will be present only in the large-screen layouts
             // (res/layout-sw600dp). If this view is present, then the activity should be
             // in two-pane mode.
+            mTwoPane = true;
 
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
@@ -30,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
                         .replace(R.id.artist_top_tracks, new TopTrackActivityFragment(), ARTIST_TOP_TRACKS_TAG)
                         .commit();
             }
+        }else {
+            mTwoPane = false;
         }
     }
 
