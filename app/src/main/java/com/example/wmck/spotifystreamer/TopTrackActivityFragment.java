@@ -30,22 +30,34 @@ import kaaes.spotify.webapi.android.models.Tracks;
 public class TopTrackActivityFragment extends Fragment {
 
     private final String LOG_TAG = this.getClass().getSimpleName();
+    static final String TOPTRACKS_ARTIST_INFO = "TT_INFO";
 
-    public TopTrackActivityFragment() {
-    }
+
 
     private String countryCode = "CA"; // hard-coded country code used for Top Tracks search
     private String errorDialogTitle = "";
     private String errorMessage = "";
     private View rootView;
-    private String artistName = "";
+    private String mArtistName = "";
+    private String mArtistId = "";
     Tracks topTracks = null;
     TrackListItemAdapter trackListAdapter;
     List<TrackListItem> trackList = new ArrayList<TrackListItem>();
 
+    public TopTrackActivityFragment() {
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Bundle fragmentArgs = getArguments();
+        if (fragmentArgs != null){
+            ArtistInfo artistInfo = fragmentArgs.getParcelable(TOPTRACKS_ARTIST_INFO);
+            mArtistId = artistInfo.getArtistId();
+            mArtistName = artistInfo.getArtistName();
+
+        }
          rootView = inflater.inflate(R.layout.fragment_top_tracks, container, false);
 
 
@@ -54,20 +66,20 @@ public class TopTrackActivityFragment extends Fragment {
         trackListAdapter = new TrackListItemAdapter(getActivity(),trackList );
         //This activity is called with the aid of an explicit intent
         Intent intent = getActivity().getIntent();
-        String artistId = "";
+
 
         if (intent != null)
         {
 
             if (intent.hasExtra(getString(R.string.artist_key))) {
-                 artistId = intent.getStringExtra(getString(R.string.artist_key));
+                mArtistId = intent.getStringExtra(getString(R.string.artist_key));
             }
             if (intent.hasExtra(getString(R.string.artist_name))) {
-                artistName = intent.getStringExtra("artistName");
+                mArtistName = intent.getStringExtra("artistName");
                 artistHeadingView.setText(intent.getStringExtra("artistName"));
             }
             TopTracksTask topTrackstask = new TopTracksTask();
-            topTrackstask.execute(artistId, countryCode);
+            topTrackstask.execute(mArtistId, countryCode);
         }
 
         listView.setAdapter(trackListAdapter);
@@ -79,7 +91,7 @@ public class TopTrackActivityFragment extends Fragment {
                 String topTrackPreviewUrl = trackListAdapter.getItem(position).getPreviewUrl();
                 String largeThumbnailUri = trackListAdapter.getItem(position).getThumbnailLargeUri();
                 Intent intent = new Intent(getActivity(), TrackPlayerActivity.class);
-                intent.putExtra("artistName",artistName);
+                intent.putExtra("artistName", mArtistName);
                 intent.putExtra("trackTitle", topTrackTitle);
                 intent.putExtra("albumName", topTrackAlbum);
                 intent.putExtra(getString(R.string.track_duration), trackListAdapter.getItem(position).getTrackDuration());
