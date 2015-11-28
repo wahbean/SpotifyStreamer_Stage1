@@ -1,7 +1,7 @@
 package com.example.wmck.spotifystreamer;
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -35,10 +35,33 @@ import kaaes.spotify.webapi.android.models.Image;
 public class MainActivityFragment extends Fragment {
 
 	private final String LOG_TAG = this.getClass().getSimpleName();
+    static  final String ARTIST_TAG = "ARTIST";
+    private ArtistSelectedCallback mCallbacks;
+
 
 	public MainActivityFragment() {
 	}
 
+
+    public static MainActivityFragment getNewInstance(int index){
+        MainActivityFragment artistFragment = new MainActivityFragment();
+
+        Bundle args = new Bundle();
+        args.putInt(ARTIST_TAG,index);
+        artistFragment.setArguments(args);
+        return artistFragment;
+    }
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface ArtistSelectedCallback {
+        /**
+         * TopTrackActivityCallback for when an item has been selected.
+         */
+        public void onArtistSelected(String artistId, String artistName);
+    }
 
     private String errorDialogTitle = "";
     private String errorMessage = "";
@@ -140,10 +163,13 @@ public class MainActivityFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String artistId = artistListItemAdapter.getItem(position).getArtistId();
                 String artistName = artistListItemAdapter.getItem(position).getArtistName();
+                ((ArtistSelectedCallback) getActivity()).onArtistSelected(artistId,artistName);
+                /*
                 Intent intent = new Intent(getActivity(), TopTrackActivity.class);
                 intent.putExtra(getString(R.string.artist_key), artistId);
                 intent.putExtra(getString(R.string.artist_name), artistName);
                 startActivity(intent);
+                */
 
 
             }
@@ -239,7 +265,18 @@ public class MainActivityFragment extends Fragment {
         return artistsPager;
     }
 
+@Override
+    public void onAttach(Activity activity){
+    super.onAttach(activity);
+    mCallbacks = (ArtistSelectedCallback)activity;
 
+}
+
+    @Override
+    public void onDetach(){
+        super.onDetach();
+        mCallbacks = null;
+    }
 
 
 
