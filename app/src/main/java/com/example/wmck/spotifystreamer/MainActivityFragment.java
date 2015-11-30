@@ -37,6 +37,7 @@ public class MainActivityFragment extends Fragment {
 	private final String LOG_TAG = this.getClass().getSimpleName();
     static  final String ARTIST_TAG = "ARTIST";
     private ArtistSelectedCallback mCallbacks;
+    private ListView mListView;
 
 
 	public MainActivityFragment() {
@@ -146,7 +147,11 @@ public class MainActivityFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        ListView listView = (ListView) rootView.findViewById(R.id.artist_list);
+        mListView = (ListView) rootView.findViewById(R.id.artist_search_list);
+
+
+
+
 
 
 		searchText = (EditText) rootView.findViewById(R.id.search_artist);
@@ -157,19 +162,13 @@ public class MainActivityFragment extends Fragment {
 
         artistListItemAdapter = new ArtistListItemAdapter(getActivity(),artistListItems);
 
-        listView.setAdapter(artistListItemAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView.setAdapter(artistListItemAdapter);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String artistId = artistListItemAdapter.getItem(position).getArtistId();
                 String artistName = artistListItemAdapter.getItem(position).getArtistName();
-                ((ArtistSelectedCallback) getActivity()).onArtistSelected(artistId,artistName);
-                /*
-                Intent intent = new Intent(getActivity(), TopTrackActivity.class);
-                intent.putExtra(getString(R.string.artist_key), artistId);
-                intent.putExtra(getString(R.string.artist_name), artistName);
-                startActivity(intent);
-                */
+                ((ArtistSelectedCallback) getActivity()).onArtistSelected(artistId, artistName);
 
 
             }
@@ -177,6 +176,8 @@ public class MainActivityFragment extends Fragment {
 
 		return rootView;
 	}
+
+
 
     public class ArtistsTask extends AsyncTask<String, Void,List<Artist> >
     {
