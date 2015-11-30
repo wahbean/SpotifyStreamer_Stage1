@@ -149,11 +149,6 @@ public class MainActivityFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mListView = (ListView) rootView.findViewById(R.id.artist_search_list);
 
-
-
-
-
-
 		searchText = (EditText) rootView.findViewById(R.id.search_artist);
         searchText.setOnEditorActionListener(editorActionListener);
         searchText.setOnClickListener(textClickListener);
