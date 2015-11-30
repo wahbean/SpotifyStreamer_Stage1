@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (findViewById(R.id.artist_top_tracks) != null) {
+        if (findViewById(R.id.top_tracks_container) != null) {
             // The detail container view will be present only in the large-screen layouts
             // (res/layout-sw600dp). If this view is present, then the activity should be
             // in two-pane mode.
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
             // adding or replacing the detail fragment using a
             // fragment transaction.
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.artist_top_tracks, artistLayoutFragment);
+            ft.replace(R.id.top_tracks_container, artistLayoutFragment,ARTIST_TOP_TRACKS_TAG);
             ft.commit();
 
         } else { // one single pane
