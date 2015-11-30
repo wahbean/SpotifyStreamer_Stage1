@@ -194,7 +194,7 @@ public class TopTrackActivityFragment extends Fragment {
     @Override
     public void onCreate(Bundle currentInstanceState){
         super.onCreate(currentInstanceState);
-        this.setRetainInstance(true);
+
     }
 
     @Override
