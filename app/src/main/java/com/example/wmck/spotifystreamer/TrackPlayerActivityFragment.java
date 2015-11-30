@@ -1,6 +1,8 @@
 package com.example.wmck.spotifystreamer;
 
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -12,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
 
 
 /**
@@ -28,12 +32,24 @@ public class TrackPlayerActivityFragment extends Fragment {
     private String trackPreviewUrl = "";
     private ImageButton btnPlay;
 
+    MediaPlayer mMediaPlayer = new MediaPlayer();
+
     ImageButton.OnClickListener playBtnListener = new ImageButton.OnClickListener()
     {
         @Override
         public void onClick(View view)
         {
             Log.d(LOG_TAG, "onClick listener for Play Button ");
+            Log.d(LOG_TAG, "Audio URL is '" + trackPreviewUrl + "'");
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            try {
+                mMediaPlayer.setDataSource(trackPreviewUrl);
+                mMediaPlayer.prepare(); // might take long! (for buffering, etc)
+                mMediaPlayer.start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
     };
 
@@ -52,7 +68,6 @@ public class TrackPlayerActivityFragment extends Fragment {
         Intent intent = getActivity().getIntent();
 
 
-
         if (intent != null){
             if (intent.hasExtra(getString(R.string.artist_name))){
                 artistName.setText(intent.getStringExtra(getString(R.string.artist_name)));
@@ -69,11 +84,17 @@ public class TrackPlayerActivityFragment extends Fragment {
                 Picasso.with(rootView.getContext()).load(thumbnailUri).into(thumbnailView);
             }
             if (intent.hasExtra(getString(R.string.track_preview_url))){
-                trackPreviewUrl = getString(R.string.track_preview_url);
+                trackPreviewUrl = intent.getStringExtra(getString(R.string.track_preview_url));
             }
         }
         btnPlay.setOnClickListener(playBtnListener);
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mMediaPlayer != null) mMediaPlayer.release();
     }
 }
