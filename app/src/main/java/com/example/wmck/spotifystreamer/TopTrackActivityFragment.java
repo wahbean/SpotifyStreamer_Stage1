@@ -4,12 +4,16 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.example.wmck.spotifystreamer.adapter.TrackListItemAdapter;
+import com.example.wmck.spotifystreamer.utility.AlertHandler;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -90,14 +94,23 @@ public class TopTrackActivityFragment extends Fragment {
                 String topTrackAlbum = trackListAdapter.getItem(position).getAlbumName();
                 String topTrackPreviewUrl = trackListAdapter.getItem(position).getPreviewUrl();
                 String largeThumbnailUri = trackListAdapter.getItem(position).getThumbnailLargeUri();
+                Log.d(LOG_TAG, "Top Tracks has " + trackList.size() + " tracks.");
+                Log.d(LOG_TAG, "Current position " + position);
                 Intent intent = new Intent(getActivity(), TrackPlayerActivity.class);
+                ArrayList<TrackListItem> topTrackList = new ArrayList<TrackListItem>();
+                topTrackList.addAll(trackList);
+                intent.putParcelableArrayListExtra("topTracks", topTrackList);
+                intent.putExtra("currentPosition",position);
                 intent.putExtra("artistName", mArtistName);
-                intent.putExtra("trackTitle", topTrackTitle);
-                intent.putExtra("albumName", topTrackAlbum);
-                intent.putExtra(getString(R.string.track_duration), trackListAdapter.getItem(position).getTrackDuration());
-                intent.putExtra(getString(R.string.thumbnail_uri),largeThumbnailUri);
-                intent.putExtra(getString(R.string.track_preview_url),topTrackPreviewUrl);
+               // intent.putExtra("trackTitle", mTopTrackTitle);
+                //intent.putExtra("albumName", topTrackAlbum);
+                //intent.putExtra(getString(R.string.track_duration), trackListAdapter.getItem(position).getTrackDuration());
+                //intent.putExtra(getString(R.string.thumbnail_uri), largeThumbnailUri);
+                //intent.putExtra(getString(R.string.track_preview_url), topTrackPreviewUrl);
                 startActivity(intent);
+
+
+
 
             }
         });
