@@ -18,6 +18,9 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.wmck.spotifystreamer.adapter.ArtistListItemAdapter;
+import com.example.wmck.spotifystreamer.utility.AlertHandler;
+
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -200,7 +203,7 @@ public class MainActivityFragment extends Fragment {
                         @Override
                         public void run() {
                             AlertHandler.showAlertDialog(getString(R.string.alert_no_results)
-                                    , getString(R.string.try_another_search),rootView.getContext());
+                                    , getString(R.string.try_another_search), rootView.getContext());
                         }
                     });
                 }
