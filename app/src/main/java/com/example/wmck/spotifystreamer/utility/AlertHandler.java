@@ -1,4 +1,4 @@
-package com.example.wmck.spotifystreamer;
+package com.example.wmck.spotifystreamer.utility;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import com.example.wmck.spotifystreamer.R;
 
 /**
  * Created by wmck on 07/07/15.
