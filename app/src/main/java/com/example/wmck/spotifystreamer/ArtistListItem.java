@@ -8,13 +8,7 @@ public class ArtistListItem {
     String artistIconUri;
     String artistId;
 
-    public String getArtistId() {
-        return artistId;
-    }
 
-    public void setArtistId(String artistId) {
-        this.artistId = artistId;
-    }
 
     public ArtistListItem(String artistName, String artistIconUri, String artistId) {
         this.artistName = artistName;
@@ -22,7 +16,13 @@ public class ArtistListItem {
         this.artistId = artistId;
     }
 
+    public String getArtistId() {
+        return artistId;
+    }
 
+    public void setArtistId(String artistId) {
+        this.artistId = artistId;
+    }
 
     public String getArtistName() {
         return artistName;
