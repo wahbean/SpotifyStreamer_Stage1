@@ -1,4 +1,4 @@
-package com.example.wmck.spotifystreamer;
+package com.example.wmck.spotifystreamer.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.wmck.spotifystreamer.ArtistListItem;
+import com.example.wmck.spotifystreamer.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

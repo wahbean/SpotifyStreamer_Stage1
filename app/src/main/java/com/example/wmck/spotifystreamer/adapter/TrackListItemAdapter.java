@@ -1,4 +1,4 @@
-package com.example.wmck.spotifystreamer;
+package com.example.wmck.spotifystreamer.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,8 +8,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.wmck.spotifystreamer.R;
+import com.example.wmck.spotifystreamer.TrackListItem;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,10 +20,15 @@ import java.util.List;
  */
 public class TrackListItemAdapter extends ArrayAdapter<TrackListItem> {
     private final String LOG_TAG = this.getClass().getSimpleName();
+    private ArrayList<TrackListItem> trackList = new ArrayList<TrackListItem>();
+
 
     public TrackListItemAdapter(Context context,  List<TrackListItem> objects) {
         super(context, 0, objects);
+
     }
+
+
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
